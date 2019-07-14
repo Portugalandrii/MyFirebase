@@ -1,5 +1,6 @@
 package com.example.myfirebase
 
+import android.app.AlertDialog
 import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
@@ -9,25 +10,27 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.DatabaseReference
 
-class AdapterUser(var userList: MutableList<User>?,var context: Context) : RecyclerView.Adapter<AdapterUser.ViewHolder>(),
-    View.OnCreateContextMenuListener {
-
-    override fun onCreateContextMenu(
-        menuContext: ContextMenu?,
-        p1: View?,
-        p2: ContextMenu.ContextMenuInfo?
-    ) {
-        val Edit = menuContext!!.add(Menu.NONE, 1, 1, "Edit")
-        val Delete = menuContext.add(Menu.NONE, 2, 2, "Delete")
-        Edit.setOnMenuItemClickListener(Edit)
-        Delete.setOnMenuItemClickListener(Delete)
-
-    }
-
-    private fun MenuItem.setOnMenuItemClickListener(edit: MenuItem?) {
-
-    }
+class AdapterUser(var userList: MutableList<User>?, var context: Context, var reference: DatabaseReference?) :
+    RecyclerView.Adapter<AdapterUser.ViewHolder>(){
+//    View.OnCreateContextMenuListener {
+//
+//    override fun onCreateContextMenu(
+//        menuContext: ContextMenu?,
+//        p1: View?,
+//        p2: ContextMenu.ContextMenuInfo?
+//    ) {
+//        val Edit = menuContext!!.add(Menu.NONE, 1, 1, "Edit")
+//        val Delete = menuContext.add(Menu.NONE, 2, 2, "Delete")
+//        Edit.setOnMenuItemClickListener(Edit)
+//        Delete.setOnMenuItemClickListener(Delete)
+//
+//    }
+//
+//    private fun MenuItem.setOnMenuItemClickListener(edit: MenuItem?) {
+//
+//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterUser.ViewHolder {
         val v = LayoutInflater.from(parent?.context).inflate(R.layout.item, parent, false)
@@ -35,7 +38,7 @@ class AdapterUser(var userList: MutableList<User>?,var context: Context) : Recyc
     }
 
     override fun getItemCount(): Int {
-        if (userList!=null)return userList?.size!!
+        if (userList != null) return userList?.size!!
         else return 0
     }
 
@@ -44,11 +47,23 @@ class AdapterUser(var userList: MutableList<User>?,var context: Context) : Recyc
         var userL = userList?.get(posit)
         vh?.name?.text = "Имя: " + userList?.get(posit)?.name
         vh?.age?.text = "Возраст: " + userList?.get(posit)?.age
-        vh?.item.setOnCreateContextMenuListener(this)
-//        vh?.item.setOnClickListener {
-//            val i = Intent(context, AddActivity::class.java)
-//            context.startActivity(i)
-//        }
+        //vh?.item.setOnCreateContextMenuListener(this)
+        vh?.item.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Title")
+            builder.setMessage("Delete")
+            builder.setPositiveButton("Yes"){
+                    dialog, which ->
+
+                val user =  reference?.child(userList?.get(posit)?.key!!)
+                user?.removeValue()
+
+
+            }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

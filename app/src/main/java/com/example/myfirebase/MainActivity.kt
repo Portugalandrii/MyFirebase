@@ -28,11 +28,12 @@ class MainActivity : AppCompatActivity() {
 
         var recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-
-        var adapter: AdapterUser = AdapterUser(result,this)
-        recyclerView.adapter = adapter
         database = FirebaseDatabase.getInstance()
         reference = database!!.getReference("user")
+        var adapter: AdapterUser = AdapterUser(result,this, reference)
+        recyclerView.adapter = adapter
+
+
         val myRef = database!!.getReference("user")
 
         save.setOnClickListener {
