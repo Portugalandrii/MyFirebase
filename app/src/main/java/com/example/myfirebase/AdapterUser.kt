@@ -5,32 +5,17 @@ import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.view.*
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DatabaseReference
+import kotlinx.android.synthetic.main.activity_main.*
 
 class AdapterUser(var userList: MutableList<User>?, var context: Context, var reference: DatabaseReference?) :
     RecyclerView.Adapter<AdapterUser.ViewHolder>(){
-//    View.OnCreateContextMenuListener {
-//
-//    override fun onCreateContextMenu(
-//        menuContext: ContextMenu?,
-//        p1: View?,
-//        p2: ContextMenu.ContextMenuInfo?
-//    ) {
-//        val Edit = menuContext!!.add(Menu.NONE, 1, 1, "Edit")
-//        val Delete = menuContext.add(Menu.NONE, 2, 2, "Delete")
-//        Edit.setOnMenuItemClickListener(Edit)
-//        Delete.setOnMenuItemClickListener(Delete)
-//
-//    }
-//
-//    private fun MenuItem.setOnMenuItemClickListener(edit: MenuItem?) {
-//
-//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterUser.ViewHolder {
         val v = LayoutInflater.from(parent?.context).inflate(R.layout.item, parent, false)
@@ -51,13 +36,25 @@ class AdapterUser(var userList: MutableList<User>?, var context: Context, var re
         vh?.item.setOnClickListener {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Title")
-            builder.setMessage("Delete")
-            builder.setPositiveButton("Yes"){
+            builder.setMessage("Delete or Update")
+            builder.setPositiveButton("Delete"){
                     dialog, which ->
 
                 val user =  reference?.child(userList?.get(posit)?.key!!)
                 user?.removeValue()
+            }
+            builder.setNeutralButton("Cancel") { dialog, which ->
 
+            }
+
+            builder.setNegativeButton("Update") { dialog, which ->
+                val intent = Intent(context,MainActivity::class.java)
+//                intent.putExtra("name",userList?.get(posit)?.name)
+
+                intent.putExtra("key",userList?.get(posit)?.key)
+                intent.putExtra("name",userList?.get(posit)?.name)
+                intent.putExtra("age",userList?.get(posit)?.age)
+                context.startActivity(intent)
 
             }
             val dialog: AlertDialog = builder.create()
